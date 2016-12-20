@@ -9,52 +9,57 @@ var RTM_EVENTS = Slack.RTM_EVENTS;
 
 //
 var bot_api_token = process.env.BOT_API_TOKEN;
-var notify_users = process.env.NOTIFY_USERS || [];
+var subscribers = process.env.SUBSCRIBERS.split(",");
 
 //
-var rtm = new RtmClient(bot_api_token, { logLevel: 'info' });
+var rtm = new RtmClient(bot_api_token, { logLevel: "info" });
 var web = new WebClient(bot_api_token);
 
 //
 var _notify = function(user, message){
   web.chat.postMessage(user, message, function(err, res) {
-    if (err) {console.log('Error:', err);}
-    else {console.log("New user joined: ", res);}
+    if (err) {console.log("postMessage failed: ", err);}
   });
 }
 
-// connecting
+// connecting...
 rtm.on(CLIENT_EVENTS.RTM.CONNECTING, function () {
-  console.log("Connecting...")
+  process.stdout.write("Connecting....... ");
 });
 
-// authenticating
+// authenticated
 rtm.on(CLIENT_EVENTS.RTM.AUTHENTICATED, function (rtmStartData) {
-  console.log("Authenticated...")
+  console.log("Success!");
+  console.log("Authenticating... Success!")
 });
 
 // connected
 rtm.on(CLIENT_EVENTS.RTM.RTM_CONNECTION_OPENED, function () {
   console.log("Connected!")
-  console.log("\nUsers receiving notifications: ", notify_users)
+  console.log("\nSending notifications to: ", subscribers)
 });
 
-// user joins channel; notify when users join channel
-rtm.on(RTM_EVENTS.CHANNEL_JOIN, function () {
-  console.log("JOIN!", arguments)
-
-  var message = "A new user has joined the channel."
-
-  //
-  notify_users.forEach(function(user) {
-    _notify(user, message);
-  });
-});
-
-// new message
-// rtm.on(RTM_EVENTS.MESSAGE, function(message) {
-//
+// user joins the team
+// rtm.on(RTM_EVENTS.TEAM_JOIN, function () {
+//   console.log("TEAM JOIN!", arguments)
 // });
+
+// user joins channel
+// rtm.on(RTM_EVENTS.CHANNEL_JOIN, function () {
+//   console.log("CHANNEL JOIN!", arguments)
+// });
+
+// new channel message
+rtm.on(RTM_EVENTS.MESSAGE, function(message) {
+  console.log("MESSAGE!", message)
+
+  // notify when someone joins a channel
+  if (message.subtype == "channel_join") {
+    subscribers.forEach(function(user) {
+      _notify(user, message.text);
+    });
+  }
+});
 
 // websocket closed
 rtm.on(CLIENT_EVENTS.RTM.WS_CLOSED, function () {
