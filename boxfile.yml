@@ -1,0 +1,11 @@
+run.config:
+  engine: nodejs
+
+  # cache node_modules
+  cache_dirs:
+    - node_modules
+
+# add a web component and give it a "start" command
+web.main:
+  start:
+    node: node index.js
