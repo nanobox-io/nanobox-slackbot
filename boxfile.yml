@@ -6,6 +6,6 @@ run.config:
     - node_modules
 
 # add a web component and give it a "start" command
-web.main:
+worker.main:
   start:
     node: node index.js
