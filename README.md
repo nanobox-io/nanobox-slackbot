@@ -27,7 +27,7 @@ git clone https://github.com/nanobox-io/nanobox-slackbot.git
 cd nanobox-slackbot
 ```
 
-#### Locally
+### Locally
 
 ```bash
 # add your slack bot api token
@@ -40,7 +40,7 @@ nanobox add evar local SUBSCRIBERS=@username,#channel,etc.
 nanobox run node index.js
 ```
 
-#### In Production
+### In Production
 
 To run nanobot in production follow the guides on <a href="http://guides.nanobox.io/nodejs/generic/launch-your-app/", target="\_blank">launching a nodejs app with nanobox</a>.
 
