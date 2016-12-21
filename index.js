@@ -10,17 +10,29 @@ var RTM_EVENTS = Slack.RTM_EVENTS;
 //
 var bot_api_token = process.env.BOT_API_TOKEN;
 var subscribers = process.env.SUBSCRIBERS.split(",");
+// var channels
+// var users
 
 //
 var rtm = new RtmClient(bot_api_token, { logLevel: "info" });
 var web = new WebClient(bot_api_token);
 
 //
-var _notify = function(user, message){
+var _notify = function (user, message){
   web.chat.postMessage(user, message, function(err, res) {
     if (err) {console.log("postMessage failed: ", err);}
   });
 }
+
+//
+// var _findChannelByID = function (chid) {
+//   return channels.find(function (ch) {return ch.id === chid});
+// }
+
+// //
+// var _findUserByID = function (usrid) {
+//   return users.find(function (usr) {return usr.id === usrid});
+// }
 
 // connecting...
 rtm.on(CLIENT_EVENTS.RTM.CONNECTING, function () {
@@ -31,6 +43,9 @@ rtm.on(CLIENT_EVENTS.RTM.CONNECTING, function () {
 rtm.on(CLIENT_EVENTS.RTM.AUTHENTICATED, function (rtmStartData) {
   console.log("Success!");
   console.log("Authenticating... Success!")
+
+  // channels = rtmStartData.channels
+  // users = rtmStartData.users
 });
 
 // connected
@@ -51,12 +66,12 @@ rtm.on(CLIENT_EVENTS.RTM.RTM_CONNECTION_OPENED, function () {
 
 // new channel message
 rtm.on(RTM_EVENTS.MESSAGE, function(message) {
-  console.log("MESSAGE!", message)
+  // console.log("MESSAGE!", message)
 
-  // notify when someone joins a channel
+  // notify when someone joins the channel
   if (message.subtype == "channel_join") {
-    subscribers.forEach(function(user) {
-      _notify(user, message.text);
+    subscribers.forEach(function(sub) {
+      _notify(sub, `<@${message.user}> has joined <#${message.channel}>`);
     });
   }
 });
