@@ -9,14 +9,14 @@ var RTM_EVENTS = Slack.RTM_EVENTS;
 
 //
 var bot_api_token = process.env.BOT_API_TOKEN;
-var subscribers = process.env.SUBSCRIBERS.split(",");
+var subscribers = (process.env.SUBSCRIBERS || "").split(" ");
 
 //
 var rtm = new RtmClient(bot_api_token, { logLevel: "info" });
 var web = new WebClient(bot_api_token);
 
 //
-var _notify = function (user, message){
+var _notify = function (user, message) {
   web.chat.postMessage(user, message, function(err, res) {
     if (err) {console.log("postMessage failed: ", err);}
   });
@@ -36,7 +36,7 @@ rtm.on(CLIENT_EVENTS.RTM.AUTHENTICATED, function (rtmStartData) {
 // connected
 rtm.on(CLIENT_EVENTS.RTM.RTM_CONNECTION_OPENED, function () {
   console.log("Connected!")
-  console.log("\nSending notifications to: ", subscribers)
+  console.log("\nSubscribers: ", subscribers)
 });
 
 // new channel message
@@ -50,20 +50,10 @@ rtm.on(RTM_EVENTS.MESSAGE, function(message) {
   }
 });
 
-// websocket closed
-rtm.on(CLIENT_EVENTS.RTM.WS_CLOSED, function () {
-  console.log("Socket closed...")
-});
-
-// websocket error
-rtm.on(CLIENT_EVENTS.RTM.WS_ERROR, function (error) {
-  console.log("Socket error: ", error)
-});
-
-// connection lost
-rtm.on(CLIENT_EVENTS.RTM.DISCONNECT, function (error, code) {
-  console.log("Disconnected! ", `(${code}) ${error}`)
-});
+//
+rtm.on(CLIENT_EVENTS.RTM.WS_CLOSED, function () {console.log("Socket closed...")});
+rtm.on(CLIENT_EVENTS.RTM.WS_ERROR, function (error) {console.log("Socket error: ", error)});
+rtm.on(CLIENT_EVENTS.RTM.DISCONNECT, function (error, code) {console.log("Disconnected! ", `(${code}) ${error}`)});
 
 //
 rtm.start();

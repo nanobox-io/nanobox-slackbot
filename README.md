@@ -12,9 +12,9 @@ Nanobot makes use of two environment variables:
 # This is your Slack bot api token.
 BOT_API_TOKEN=slackbot-api-token
 
-# This is a comma delimited list of channels|groups|usernames/id's
+# This is a space delimited list of channels|groups|usernames/id's
 # which will get notified when someone joins the channel.
-SUBSCRIBERS=@username,#channel,etc.
+SUBSCRIBERS=@username #channel etc.
 ```
 
 ## Run the app
@@ -34,7 +34,7 @@ cd nanobox-slackbot
 nanobox add evar local BOT_API_TOKEN=slackbot-api-token
 
 # add your notify users
-nanobox add evar local SUBSCRIBERS=@username,#channel,etc.
+nanobox add evar local SUBSCRIBERS=@username #channel etc.
 
 # run the app
 nanobox run node index.js
